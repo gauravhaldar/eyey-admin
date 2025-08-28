@@ -8,6 +8,7 @@ export default function DashboardLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [shippingDropdownOpen, setShippingDropdownOpen] = useState(false);
 
   useEffect(() => {
     const verifyAdmin = async () => {
@@ -182,6 +183,70 @@ export default function DashboardLayout({ children }) {
                 >
                   🎟️ Coupons
                 </button>
+              </li>
+              {/* New Shipping Settings Dropdown */}
+              <li>
+                <div className="relative">
+                  <button
+                    onClick={() => setShippingDropdownOpen(!shippingDropdownOpen)}
+                    className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors flex justify-between items-center"
+                  >
+                    <span>🚚 Shipping Settings</span>
+                    <svg
+                      className={`w-4 h-4 transform ${
+                        shippingDropdownOpen ? "rotate-180" : "rotate-0"
+                      } transition-transform`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </button>
+                  {shippingDropdownOpen && (
+                    <ul className="pl-6 mt-2 space-y-2">
+                      <li>
+                        <button
+                          onClick={() => {
+                            router.push("/dashboard/shipping/locations");
+                            if (window.innerWidth < 1024) setSidebarVisible(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors"
+                        >
+                          📍 Shipping Locations
+                        </button>
+                      </li>
+                      {/* <li>
+                        <button
+                          onClick={() => {
+                            router.push("/dashboard/shipping/charges");
+                            if (window.innerWidth < 1024) setSidebarVisible(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors"
+                        >
+                          💸 Shipping Charges
+                        </button>
+                      </li> */}
+                      <li>
+                        <button
+                          onClick={() => {
+                            router.push("/dashboard/shipping/states");
+                            if (window.innerWidth < 1024) setSidebarVisible(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors"
+                        >
+                          🗺️ States
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
               </li>
             </ul>
           </div>
