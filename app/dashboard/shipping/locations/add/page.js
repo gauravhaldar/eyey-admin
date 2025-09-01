@@ -14,26 +14,38 @@ export default function AddZipCodePage() {
 
   const handleCreateZipCode = async () => {
     // Basic validation
-    if (!zipCode || !charge || !priceLessThan || !state || !stateCode || !gstCode) {
+    if (
+      !zipCode ||
+      !charge ||
+      !priceLessThan ||
+      !state ||
+      !stateCode ||
+      !gstCode
+    ) {
       alert("Please fill in all fields.");
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/shipping/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          zipCode,
-          charges: parseFloat(charge),
-          priceLessThan: parseFloat(priceLessThan),
-          state,
-          stateCode,
-          gstCode,
-        }),
-      });
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/shipping/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            zipCode,
+            charges: parseFloat(charge),
+            priceLessThan: parseFloat(priceLessThan),
+            state,
+            stateCode,
+            gstCode,
+          }),
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to create zip code");
@@ -55,7 +67,10 @@ export default function AddZipCodePage() {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="zipCode"
+            className="block text-sm font-medium text-gray-700"
+          >
             Zip Code
           </label>
           <input
@@ -67,7 +82,10 @@ export default function AddZipCodePage() {
           />
         </div>
         <div>
-          <label htmlFor="charge" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="charge"
+            className="block text-sm font-medium text-gray-700"
+          >
             Charge
           </label>
           <input
@@ -79,7 +97,10 @@ export default function AddZipCodePage() {
           />
         </div>
         <div>
-          <label htmlFor="priceLessThan" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="priceLessThan"
+            className="block text-sm font-medium text-gray-700"
+          >
             Price Less Than
           </label>
           <input
@@ -91,7 +112,10 @@ export default function AddZipCodePage() {
           />
         </div>
         <div>
-          <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="state"
+            className="block text-sm font-medium text-gray-700"
+          >
             State
           </label>
           <input
@@ -103,7 +127,10 @@ export default function AddZipCodePage() {
           />
         </div>
         <div>
-          <label htmlFor="stateCode" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="stateCode"
+            className="block text-sm font-medium text-gray-700"
+          >
             State Code
           </label>
           <input
@@ -115,7 +142,10 @@ export default function AddZipCodePage() {
           />
         </div>
         <div>
-          <label htmlFor="gstCode" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="gstCode"
+            className="block text-sm font-medium text-gray-700"
+          >
             GST Code
           </label>
           <input

@@ -13,10 +13,15 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/admin/me", {
-          method: "GET",
-          credentials: "include", // send cookies
-        });
+        const res = await fetch(
+          `${
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+          }/api/admin/me`,
+          {
+            method: "GET",
+            credentials: "include", // send cookies
+          }
+        );
 
         if (!res.ok) {
           router.push("/login");
@@ -56,10 +61,15 @@ export default function DashboardLayout({ children }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8000/api/admin/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/admin/logout`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
@@ -188,7 +198,9 @@ export default function DashboardLayout({ children }) {
               <li>
                 <div className="relative">
                   <button
-                    onClick={() => setShippingDropdownOpen(!shippingDropdownOpen)}
+                    onClick={() =>
+                      setShippingDropdownOpen(!shippingDropdownOpen)
+                    }
                     className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors flex justify-between items-center"
                   >
                     <span>🚚 Shipping Settings</span>
@@ -215,7 +227,8 @@ export default function DashboardLayout({ children }) {
                         <button
                           onClick={() => {
                             router.push("/dashboard/shipping/locations");
-                            if (window.innerWidth < 1024) setSidebarVisible(false);
+                            if (window.innerWidth < 1024)
+                              setSidebarVisible(false);
                           }}
                           className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors"
                         >
@@ -237,7 +250,8 @@ export default function DashboardLayout({ children }) {
                         <button
                           onClick={() => {
                             router.push("/dashboard/shipping/states");
-                            if (window.innerWidth < 1024) setSidebarVisible(false);
+                            if (window.innerWidth < 1024)
+                              setSidebarVisible(false);
                           }}
                           className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 transition-colors"
                         >

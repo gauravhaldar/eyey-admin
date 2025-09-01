@@ -14,14 +14,19 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:8000/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // ✅ important to send/receive cookies
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/admin/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // ✅ important to send/receive cookies
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await res.json();
 
@@ -45,9 +50,7 @@ export default function LoginPage() {
         onSubmit={handleLogin}
         className="bg-white p-8 rounded shadow-md w-full max-w-sm"
       >
-        <h2 className="text-2xl mb-6 text-center font-semibold">
-          Admin Login
-        </h2>
+        <h2 className="text-2xl mb-6 text-center font-semibold">Admin Login</h2>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 

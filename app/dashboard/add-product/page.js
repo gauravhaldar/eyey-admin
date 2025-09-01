@@ -90,11 +90,14 @@ export default function AddProductPage() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await fetch("http://localhost:8000/api/products", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res

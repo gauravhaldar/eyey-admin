@@ -11,7 +11,11 @@ export default function StatesPage() {
 
   const fetchStatesFromShipping = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/shipping");
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/shipping`
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch shipping data");
       }
@@ -26,7 +30,12 @@ export default function StatesPage() {
             item.gstCode === current.gstCode
         );
         if (!existing) {
-          acc.push({ _id: current._id, state: current.state, stateCode: current.stateCode, gstCode: current.gstCode });
+          acc.push({
+            _id: current._id,
+            state: current.state,
+            stateCode: current.stateCode,
+            gstCode: current.gstCode,
+          });
         }
         return acc;
       }, []);
@@ -40,9 +49,14 @@ export default function StatesPage() {
 
   const handleDeleteState = async (stateName) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/shipping/state/${stateName}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/shipping/state/${stateName}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to delete shipping rule");
@@ -64,7 +78,9 @@ export default function StatesPage() {
       {/* States Table */}
       {states.length > 0 ? (
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Derived States from Shipping Locations</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Derived States from Shipping Locations
+          </h2>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
               <thead>

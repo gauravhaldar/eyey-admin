@@ -11,10 +11,13 @@ export default function ViewProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/products", {
-          method: "GET",
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
         if (!res.ok) {
           throw new Error("Failed to fetch products");
@@ -34,13 +37,19 @@ export default function ViewProductsPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/products/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/products/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to delete product");
@@ -64,9 +73,13 @@ export default function ViewProductsPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800">📦 View All Products</h2>
+      <h2 className="text-3xl font-bold mb-8 text-gray-800">
+        📦 View All Products
+      </h2>
       {products.length === 0 ? (
-        <p className="text-center text-gray-600 text-lg">No products found. Add some products first!</p>
+        <p className="text-center text-gray-600 text-lg">
+          No products found. Add some products first!
+        </p>
       ) : (
         <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
           <table className="min-w-full leading-normal">
@@ -94,7 +107,9 @@ export default function ViewProductsPage() {
                         className="w-16 h-16 object-cover rounded-md"
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-gray-300 rounded-md flex items-center justify-center text-xs text-gray-500">No Image</div>
+                      <div className="w-16 h-16 bg-gray-300 rounded-md flex items-center justify-center text-xs text-gray-500">
+                        No Image
+                      </div>
                     )}
                   </td>
                   <td className="py-3 px-6 text-left">{product.name}</td>

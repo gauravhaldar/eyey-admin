@@ -13,7 +13,11 @@ export default function ShippingLocationsPage() {
 
   const fetchZipCodes = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/shipping");
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/shipping`
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch zip codes");
       }
@@ -31,9 +35,14 @@ export default function ShippingLocationsPage() {
 
   const handleDeleteZipCode = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/shipping/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        }/api/shipping/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to delete zip code");
@@ -70,7 +79,9 @@ export default function ShippingLocationsPage() {
                   <th className="px-4 py-2 border-b text-left">ID</th>
                   <th className="px-4 py-2 border-b text-left">Code</th>
                   <th className="px-4 py-2 border-b text-left">Charge</th>
-                  <th className="px-4 py-2 border-b text-left">Price Less Than</th>
+                  <th className="px-4 py-2 border-b text-left">
+                    Price Less Than
+                  </th>
                   <th className="px-4 py-2 border-b text-left">Action</th>
                 </tr>
               </thead>
@@ -79,8 +90,12 @@ export default function ShippingLocationsPage() {
                   <tr key={zc._id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 border-b">{zc._id}</td>
                     <td className="px-4 py-2 border-b">{zc.zipCode}</td>
-                    <td className="px-4 py-2 border-b">₹{zc.charges ? zc.charges.toFixed(2) : '0.00'}</td>
-                    <td className="px-4 py-2 border-b">₹{zc.priceLessThan ? zc.priceLessThan.toFixed(2) : '0.00'}</td>
+                    <td className="px-4 py-2 border-b">
+                      ₹{zc.charges ? zc.charges.toFixed(2) : "0.00"}
+                    </td>
+                    <td className="px-4 py-2 border-b">
+                      ₹{zc.priceLessThan ? zc.priceLessThan.toFixed(2) : "0.00"}
+                    </td>
                     <td className="px-4 py-2 border-b">
                       <button
                         onClick={() => handleDeleteZipCode(zc._id)}
