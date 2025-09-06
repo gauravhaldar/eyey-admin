@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 export default function EditProductPage() {
@@ -33,9 +33,9 @@ export default function EditProductPage() {
     if (productId) {
       fetchProduct();
     }
-  }, [productId]);
+  }, [productId, fetchProduct]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await fetch(
         `${
@@ -74,7 +74,7 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, router]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

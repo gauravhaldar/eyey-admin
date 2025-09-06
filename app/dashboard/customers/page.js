@@ -587,7 +587,7 @@ export default function Customers() {
                   No Results Found
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  No customers match your search criteria for "{searchTerm}".
+                  No customers match your search criteria for &quot;{searchTerm}&quot;.
                 </p>
                 <button
                   onClick={() => {
