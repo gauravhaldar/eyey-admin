@@ -27,6 +27,12 @@ export default function AddProductPage() {
   const [bulkUploadProgress, setBulkUploadProgress] = useState(false);
   const [bulkUploadResult, setBulkUploadResult] = useState(null);
 
+  // Bulk image upload states
+  const [bulkImageFiles, setBulkImageFiles] = useState([]);
+  const [bulkImageProgress, setBulkImageProgress] = useState(false);
+  const [bulkImageResult, setBulkImageResult] = useState(null);
+  const [bulkImageUploadProgress, setBulkImageUploadProgress] = useState(0);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({
@@ -232,6 +238,192 @@ export default function AddProductPage() {
     }
   };
 
+  // Bulk image upload functions
+  const handleBulkImageFilesChange = (e) => {
+    const files = Array.from(e.target.files);
+    const currentCount = bulkImageFiles.length;
+    const newCount = currentCount + files.length;
+
+    if (newCount > 50) {
+      alert(
+        `Cannot add ${files.length} images. You can only have a maximum of 50 images total. Currently selected: ${currentCount}`
+      );
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file types
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const invalidFiles = files.filter(
+      (file) => !validTypes.includes(file.type)
+    );
+
+    if (invalidFiles.length > 0) {
+      alert(
+        `Invalid file types detected: ${invalidFiles
+          .map((f) => f.name)
+          .join(", ")}. Please upload only JPEG, PNG, or WebP images.`
+      );
+      e.target.value = "";
+      return;
+    }
+
+    // Check for duplicate files by name
+    const existingNames = bulkImageFiles.map((file) => file.name);
+    const duplicateFiles = files.filter((file) =>
+      existingNames.includes(file.name)
+    );
+
+    if (duplicateFiles.length > 0) {
+      alert(
+        `Duplicate files detected: ${duplicateFiles
+          .map((f) => f.name)
+          .join(", ")}. These files are already selected.`
+      );
+      e.target.value = "";
+      return;
+    }
+
+    // Add new files to existing selection
+    setBulkImageFiles((prev) => [...prev, ...files]);
+    setBulkImageResult(null);
+
+    // Clear the input so the same files can be selected again if needed
+    e.target.value = "";
+  };
+
+  const removeImageFile = (indexToRemove) => {
+    setBulkImageFiles((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
+    setBulkImageResult(null);
+  };
+
+  const clearAllImages = () => {
+    setBulkImageFiles([]);
+    setBulkImageResult(null);
+  };
+
+  const handleBulkImageUpload = async () => {
+    if (bulkImageFiles.length === 0) {
+      alert("Please select images to upload");
+      return;
+    }
+
+    setBulkImageProgress(true);
+    setBulkImageResult(null);
+    setBulkImageUploadProgress(0);
+
+    const formData = new FormData();
+    bulkImageFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    try {
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setBulkImageUploadProgress((prev) => {
+          if (prev >= bulkImageFiles.length) {
+            clearInterval(progressInterval);
+            return bulkImageFiles.length;
+          }
+          return prev + 1;
+        });
+      }, 100);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products/bulk-upload-images`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      clearInterval(progressInterval);
+      setBulkImageUploadProgress(bulkImageFiles.length);
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setBulkImageResult({
+          success: true,
+          message: result.message,
+          uploadedImages: result.uploadedImages,
+          errors: result.errors || [],
+          summary: result.summary,
+        });
+        setBulkImageFiles([]);
+        setBulkImageUploadProgress(0);
+      } else {
+        setBulkImageResult({
+          success: false,
+          message: result.message,
+          errors: result.errors || [],
+        });
+      }
+    } catch (error) {
+      console.error("Bulk image upload error:", error);
+      setBulkImageResult({
+        success: false,
+        message: "Failed to upload images",
+        errors: [{ message: error.message }],
+      });
+    } finally {
+      setBulkImageProgress(false);
+    }
+  };
+
+  const copyImageUrls = () => {
+    if (bulkImageResult && bulkImageResult.uploadedImages) {
+      const urls = bulkImageResult.uploadedImages
+        .map((img) => img.cloudinary.url)
+        .join("|");
+      navigator.clipboard
+        .writeText(urls)
+        .then(() => {
+          alert(
+            "Image URLs copied to clipboard! You can paste them in the CSV images column."
+          );
+        })
+        .catch((err) => {
+          console.error("Failed to copy URLs:", err);
+          alert("Failed to copy URLs to clipboard");
+        });
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        alert("URL copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+        alert("Failed to copy to clipboard");
+      });
+  };
+
+  const copyAllImageUrls = () => {
+    if (bulkImageResult && bulkImageResult.uploadedImages) {
+      const successfulUrls = bulkImageResult.uploadedImages
+        .filter((img) => img.cloudinary && img.cloudinary.url)
+        .map((img) => img.cloudinary.url)
+        .join(", ");
+
+      navigator.clipboard
+        .writeText(successfulUrls)
+        .then(() => {
+          alert("All image URLs copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy URLs:", err);
+          alert("Failed to copy URLs to clipboard");
+        });
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
       <h2 className="text-2xl font-bold mb-6">➕ Add New Product</h2>
@@ -349,6 +541,226 @@ export default function AddProductPage() {
                     </ul>
                   </div>
                 )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bulk Image Upload Section */}
+      <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold mb-4 text-blue-800 flex items-center">
+          🖼️ Bulk Image Upload (Max 50 Images)
+        </h3>
+        <p className="text-sm text-blue-600 mb-4">
+          Upload multiple images to Cloudinary and get URLs to use in your CSV
+          files. You can add images one by one or select multiple at once.
+          Maximum 50 images total.
+        </p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-blue-700 mb-2">
+              Select Images (Add one by one or multiple at once)
+            </label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleBulkImageFilesChange}
+              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-xs text-blue-500">
+                Selected: {bulkImageFiles.length}/50 images
+                {bulkImageFiles.length > 50 && (
+                  <span className="text-red-500 ml-1">(Exceeds limit)</span>
+                )}
+              </p>
+              {bulkImageFiles.length > 0 && (
+                <button
+                  type="button"
+                  onClick={clearAllImages}
+                  className="text-xs text-red-600 hover:text-red-800 underline"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Selected Images Preview */}
+          {bulkImageFiles.length > 0 && (
+            <div className="bg-white border border-blue-200 rounded-md p-3">
+              <h4 className="text-sm font-medium text-blue-800 mb-2">
+                Selected Images:
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-40 overflow-y-auto">
+                {bulkImageFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="relative bg-blue-50 border border-blue-200 rounded p-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="text-xs text-blue-700 truncate flex-1"
+                        title={file.name}
+                      >
+                        {file.name.length > 15
+                          ? file.name.substring(0, 15) + "..."
+                          : file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeImageFile(index)}
+                        className="ml-1 text-red-500 hover:text-red-700 text-xs"
+                        title="Remove this image"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleBulkImageUpload}
+            disabled={
+              bulkImageFiles.length === 0 ||
+              bulkImageFiles.length > 50 ||
+              bulkImageProgress
+            }
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+          >
+            {bulkImageProgress ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Uploading...</span>
+              </>
+            ) : (
+              <>
+                <span>📤</span>
+                <span>Upload Images to Cloudinary</span>
+              </>
+            )}
+          </button>
+
+          {/* Upload Progress */}
+          {bulkImageProgress && (
+            <div className="bg-white border border-blue-200 rounded-md p-3">
+              <div className="flex justify-between text-sm text-blue-600 mb-2">
+                <span>Uploading images...</span>
+                <span>
+                  {bulkImageFiles.length > 0
+                    ? Math.round(
+                        (bulkImageUploadProgress / bulkImageFiles.length) * 100
+                      )
+                    : 0}
+                  %
+                </span>
+              </div>
+              <div className="w-full bg-blue-100 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${
+                      bulkImageFiles.length > 0
+                        ? (bulkImageUploadProgress / bulkImageFiles.length) *
+                          100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Results */}
+          {bulkImageResult && (
+            <div className="bg-white border border-blue-200 rounded-md p-4">
+              <h4 className="font-medium text-blue-800 mb-3">
+                Upload Results:
+              </h4>
+              {bulkImageResult.success ? (
+                <div className="space-y-2">
+                  <p className="text-green-600 text-sm mb-3">
+                    ✅ {bulkImageResult.message}
+                  </p>
+                  {bulkImageResult.uploadedImages &&
+                    bulkImageResult.uploadedImages.length > 0 && (
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {bulkImageResult.uploadedImages.map((result, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between bg-blue-50 p-2 rounded text-sm"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span className="text-green-600">✅</span>
+                              <span className="truncate max-w-xs">
+                                {result.originalName}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="text"
+                                value={result.cloudinary.url}
+                                readOnly
+                                className="bg-white border border-blue-200 rounded px-2 py-1 text-xs w-48"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  copyToClipboard(result.cloudinary.url)
+                                }
+                                className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
+                              >
+                                Copy
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                  {/* Copy All URLs Button */}
+                  {bulkImageResult.uploadedImages &&
+                    bulkImageResult.uploadedImages.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-blue-200">
+                        <button
+                          type="button"
+                          onClick={copyAllImageUrls}
+                          className="bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 flex items-center space-x-2"
+                        >
+                          <span>📋</span>
+                          <span>Copy All URLs</span>
+                        </button>
+                        <p className="text-xs text-blue-500 mt-1">
+                          Copies all successful URLs separated by commas for
+                          easy pasting into CSV files.
+                        </p>
+                      </div>
+                    )}
+                </div>
+              ) : (
+                <div className="text-red-600">
+                  <p className="text-sm mb-2">❌ {bulkImageResult.message}</p>
+                  {bulkImageResult.errors &&
+                    bulkImageResult.errors.length > 0 && (
+                      <div className="space-y-1">
+                        {bulkImageResult.errors.map((error, index) => (
+                          <p key={index} className="text-xs">
+                            {error.message}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                </div>
+              )}
             </div>
           )}
         </div>
