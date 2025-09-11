@@ -19,6 +19,7 @@ import {
   Truck,
   AlertCircle,
   X,
+  FileText,
 } from "lucide-react";
 
 export default function OrdersPage() {
@@ -139,6 +140,52 @@ export default function OrdersPage() {
     }
   };
 
+  // Download invoice
+  const downloadInvoice = async (orderId) => {
+    try {
+      const baseURL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(
+        `${baseURL}/api/admin/orders/${orderId}/invoice`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate invoice: ${response.status}`);
+      }
+
+      // Get the filename from the Content-Disposition header or use a default
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = "invoice.pdf";
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Convert response to blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log("Invoice downloaded successfully");
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert(`Failed to download invoice: ${error.message}`);
+    }
+  };
+
   // Status badge component
   const StatusBadge = ({ status }) => {
     const statusConfig = {
@@ -185,12 +232,22 @@ export default function OrdersPage() {
                 Placed on {new Date(order.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => downloadInvoice(order._id)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                title="Download Invoice"
+              >
+                <FileText className="w-4 h-4" />
+                Download Invoice
+              </button>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           <div className="p-6 space-y-6">
@@ -519,6 +576,13 @@ export default function OrdersPage() {
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => downloadInvoice(order._id)}
+                          className="text-green-600 hover:text-green-800 transition-colors"
+                          title="Download Invoice"
+                        >
+                          <FileText className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => deleteOrder(order.orderId)}
