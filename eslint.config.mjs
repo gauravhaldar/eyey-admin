@@ -19,6 +19,12 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      // Allow quote characters in JSX text without needing HTML entities
+      "react/no-unescaped-entities": "off",
+      // Prefer <Image>, but do not fail builds for <img>
+      "@next/next/no-img-element": "off",
+    },
   },
 ];
 
