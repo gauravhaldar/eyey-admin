@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Set Outfit as default font */
+:root {
+  --font-outfit: "Outfit", sans-serif;
+}
+
+body {
+  font-family: var(--font-outfit);
+}
