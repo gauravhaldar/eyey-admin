@@ -21,7 +21,7 @@ export default function Customers() {
     if (!confirmed) return;
 
     try {
-      const url = `${"http://localhost:8000"}/api/admin/customers/${customerId}`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/customers/${customerId}`;
 
       console.log("🌐 Making DELETE request to:", url);
 
@@ -302,8 +302,12 @@ export default function Customers() {
                     onChange={(e) => setSortBy(e.target.value)}
                     className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
                   >
-                    <option value="name" className="bg-gray-800">Sort by Name</option>
-                    <option value="email" className="bg-gray-800">Sort by Email</option>
+                    <option value="name" className="bg-gray-800">
+                      Sort by Name
+                    </option>
+                    <option value="email" className="bg-gray-800">
+                      Sort by Email
+                    </option>
                   </select>
                   <button
                     onClick={() =>
@@ -482,8 +486,13 @@ export default function Customers() {
                     <div>
                       <p className="text-sm text-gray-300">
                         Showing page{" "}
-                        <span className="font-medium text-white">{currentPage}</span> of{" "}
-                        <span className="font-medium text-white">{totalPages}</span>
+                        <span className="font-medium text-white">
+                          {currentPage}
+                        </span>{" "}
+                        of{" "}
+                        <span className="font-medium text-white">
+                          {totalPages}
+                        </span>
                       </p>
                     </div>
                     <div>

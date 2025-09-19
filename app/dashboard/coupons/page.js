@@ -24,7 +24,7 @@ export default function Coupons() {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://localhost:8000/api/admin/coupons",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/coupons`,
         {
           credentials: "include",
         }
@@ -65,22 +65,24 @@ export default function Coupons() {
         minValue: Number(formData.minValue),
         maxValue: Number(formData.maxValue),
         usageLimit: Number(formData.usageLimit),
-        startDate: formData.startDate && formData.startDate.trim() !== "" ? formData.startDate : null,
-        expiryDate: formData.expiryDate && formData.expiryDate.trim() !== "" ? formData.expiryDate : null,
+        startDate:
+          formData.startDate && formData.startDate.trim() !== ""
+            ? formData.startDate
+            : null,
+        expiryDate:
+          formData.expiryDate && formData.expiryDate.trim() !== ""
+            ? formData.expiryDate
+            : null,
       };
 
-
-      const response = await fetch(
-        "http://localhost:8000/api/admin/coupons",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(couponData), // Use couponData instead of formData
-        }
-      );
+      const response = await fetch("http://localhost:8000/api/admin/coupons", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(couponData), // Use couponData instead of formData
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -118,8 +120,14 @@ export default function Coupons() {
         minValue: Number(formData.minValue),
         maxValue: Number(formData.maxValue),
         usageLimit: Number(formData.usageLimit),
-        startDate: formData.startDate && formData.startDate.trim() !== "" ? formData.startDate : null,
-        expiryDate: formData.expiryDate && formData.expiryDate.trim() !== "" ? formData.expiryDate : null,
+        startDate:
+          formData.startDate && formData.startDate.trim() !== ""
+            ? formData.startDate
+            : null,
+        expiryDate:
+          formData.expiryDate && formData.expiryDate.trim() !== ""
+            ? formData.expiryDate
+            : null,
       };
 
       console.log("Updating coupon data:", couponData);
@@ -207,7 +215,11 @@ export default function Coupons() {
 
   // Check if coupon is scheduled (not yet started)
   const isScheduled = (coupon) => {
-    return coupon.startDate && coupon.startDate !== "" && new Date(coupon.startDate) > new Date();
+    return (
+      coupon.startDate &&
+      coupon.startDate !== "" &&
+      new Date(coupon.startDate) > new Date()
+    );
   };
 
   // Check if coupon is expired
@@ -262,8 +274,10 @@ export default function Coupons() {
           </h3>
           <p className="text-2xl sm:text-3xl font-bold text-green-400">
             {
-              coupons.filter((coupon) => coupon.isActive && !isExpired(coupon) && !isScheduled(coupon))
-                .length
+              coupons.filter(
+                (coupon) =>
+                  coupon.isActive && !isExpired(coupon) && !isScheduled(coupon)
+              ).length
             }
           </p>
         </div>
