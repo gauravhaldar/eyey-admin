@@ -75,14 +75,17 @@ export default function Coupons() {
             : null,
       };
 
-      const response = await fetch("http://localhost:8000/api/admin/coupons", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(couponData), // Use couponData instead of formData
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/coupons`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(couponData), // Use couponData instead of formData
+        }
+      );
 
       const data = await response.json();
       if (data.success) {
@@ -133,7 +136,7 @@ export default function Coupons() {
       console.log("Updating coupon data:", couponData);
 
       const response = await fetch(
-        `http://localhost:8000/api/admin/coupons/${editingCoupon._id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/coupons/${editingCoupon._id}`,
         {
           method: "PUT",
           headers: {
@@ -175,7 +178,7 @@ export default function Coupons() {
     if (confirm("Are you sure you want to delete this coupon?")) {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/admin/coupons/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/admin/coupons/${id}`,
           {
             method: "DELETE",
             credentials: "include",
