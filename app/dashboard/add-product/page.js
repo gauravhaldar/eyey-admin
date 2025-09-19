@@ -32,6 +32,7 @@ export default function AddProductPage() {
   const [bulkImageProgress, setBulkImageProgress] = useState(false);
   const [bulkImageResult, setBulkImageResult] = useState(null);
   const [bulkImageUploadProgress, setBulkImageUploadProgress] = useState(0);
+  const [activeTab, setActiveTab] = useState("single"); // single | bulk
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -425,24 +426,59 @@ export default function AddProductPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-gray-800 shadow-lg rounded-xl p-8 border border-gray-700">
-      <h2 className="text-2xl font-bold mb-6 text-white">➕ Add New Product</h2>
+    <div className="max-w-5xl mx-auto bg-gray-800/80 backdrop-blur shadow-2xl rounded-2xl p-6 md:p-8 border border-gray-700">
+      <div className="flex items-center gap-3 mb-6">
+        <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-700 ring-1 ring-gray-600/60">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-gray-200">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </span>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Add New Product</h2>
+          <p className="text-sm text-gray-400">Create a single product or use the bulk tools below.</p>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 mb-6">
+        <button
+          type="button"
+          onClick={() => setActiveTab("single")}
+          className={`${activeTab === "single" ? "bg-gray-700 text-white" : "bg-gray-700/40 text-gray-300 hover:bg-gray-700/60"} px-4 py-2 rounded-lg border border-gray-600 transition-colors`}
+        >
+          Single Product
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("bulk")}
+          className={`${activeTab === "bulk" ? "bg-gray-700 text-white" : "bg-gray-700/40 text-gray-300 hover:bg-gray-700/60"} px-4 py-2 rounded-lg border border-gray-600 transition-colors`}
+        >
+          Bulk Tools
+        </button>
+      </div>
 
       {/* Bulk Upload Section */}
-      <div className="mb-8 p-6 bg-gray-700 rounded-lg border border-gray-600">
-        <h3 className="text-lg font-semibold mb-4 text-blue-300">
-          📊 Bulk Upload Products
-        </h3>
+      {activeTab === "bulk" && (
+      <div className="mb-8 p-6 bg-gray-800 rounded-xl border border-gray-600">
+        <div className="flex items-center gap-2 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-blue-300">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6M7 3.75h6.75L19.5 9.5V20.25A2.25 2.25 0 0117.25 22.5H7A2.25 2.25 0 014.75 20.25V6A2.25 2.25 0 017 3.75z" />
+          </svg>
+          <h3 className="text-lg font-semibold text-blue-300">Bulk Upload Products</h3>
+        </div>
         <p className="text-sm text-gray-300 mb-4">
           Upload multiple products at once using a CSV file. Make sure your CSV
           follows the required format.
         </p>
 
         {/* Format Instructions */}
-        <div className="mb-4 p-3 bg-gray-600 rounded-lg">
-          <p className="text-sm font-medium text-blue-300 mb-2">
-            📋 CSV Format Requirements:
-          </p>
+        <div className="mb-4 p-4 bg-gray-700/70 rounded-lg border border-gray-600">
+          <div className="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-blue-300">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.75H8.25A2.25 2.25 0 006 6v12.75A2.25 2.25 0 008.25 21h7.5A2.25 2.25 0 0018 18.75V6a2.25 2.25 0 00-2.25-2.25h-1.5m-4.5 0A1.5 1.5 0 0012 2.25 1.5 1.5 0 0013.5 3.75h-3.75z" />
+            </svg>
+            <p className="text-sm font-medium text-blue-300">CSV Format Requirements:</p>
+          </div>
           <ul className="text-xs text-gray-300 space-y-1">
             <li>
               • Required fields: name, price, category, stock, brand,
@@ -466,9 +502,12 @@ export default function AddProductPage() {
             <button
               type="button"
               onClick={downloadCSVTemplate}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
-              📥 Download CSV Template
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12l4.5 4.5L16.5 12M12 3v13.5" />
+              </svg>
+              <span>Download CSV Template</span>
             </button>
           </div>
 
@@ -491,9 +530,24 @@ export default function AddProductPage() {
               type="button"
               onClick={handleBulkUpload}
               disabled={!bulkUploadFile || bulkUploadProgress}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
-              {bulkUploadProgress ? "⏳ Uploading..." : "🚀 Upload Products"}
+              {bulkUploadProgress ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V3m0 13.5l-4.5-4.5M12 16.5l4.5-4.5M3 21h18" />
+                  </svg>
+                  <span>Upload Products</span>
+                </>
+              )}
             </button>
           </div>
 
@@ -545,12 +599,17 @@ export default function AddProductPage() {
           )}
         </div>
       </div>
+      )}
 
       {/* Bulk Image Upload Section */}
-      <div className="mb-8 bg-gray-700 border border-gray-600 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4 text-blue-300 flex items-center">
-          🖼️ Bulk Image Upload (Max 50 Images)
-        </h3>
+      {activeTab === "bulk" && (
+      <div className="mb-8 bg-gray-800 border border-gray-600 rounded-xl p-6">
+        <div className="flex items-center gap-2 mb-4 text-blue-300">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 7.5l8.25 4.5 8.25-4.5M3.75 12l8.25 4.5 8.25-4.5M3.75 16.5L12 21l8.25-4.5" />
+          </svg>
+          <h3 className="text-lg font-semibold">Bulk Image Upload (Max 50 Images)</h3>
+        </div>
         <p className="text-sm text-gray-300 mb-4">
           Upload multiple images to Cloudinary and get URLs to use in your CSV
           files. You can add images one by one or select multiple at once.
@@ -580,9 +639,12 @@ export default function AddProductPage() {
                 <button
                   type="button"
                   onClick={clearAllImages}
-                  className="text-xs text-red-400 hover:text-red-300 underline"
+                  className="inline-flex items-center gap-1 text-xs text-red-400 hover:text-red-300"
                 >
-                  Clear All
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>Clear All</span>
                 </button>
               )}
             </div>
@@ -612,10 +674,13 @@ export default function AddProductPage() {
                       <button
                         type="button"
                         onClick={() => removeImageFile(index)}
-                        className="ml-1 text-red-400 hover:text-red-300 text-xs"
+                        className="ml-1 text-red-400 hover:text-red-300 text-xs inline-flex items-center gap-1"
                         title="Remove this image"
                       >
-                        ✕
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span>Remove</span>
                       </button>
                     </div>
                     <p className="text-xs text-gray-400 mt-1">
@@ -635,16 +700,21 @@ export default function AddProductPage() {
               bulkImageFiles.length > 50 ||
               bulkImageProgress
             }
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             {bulkImageProgress ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
                 <span>Uploading...</span>
               </>
             ) : (
               <>
-                <span>📤</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V3m0 13.5l-4.5-4.5M12 16.5l4.5-4.5M3 21h18" />
+                </svg>
                 <span>Upload Images to Cloudinary</span>
               </>
             )}
@@ -688,9 +758,7 @@ export default function AddProductPage() {
               </h4>
               {bulkImageResult.success ? (
                 <div className="space-y-2">
-                  <p className="text-green-400 text-sm mb-3">
-                    ✅ {bulkImageResult.message}
-                  </p>
+                  <p className="text-green-400 text-sm mb-3">{bulkImageResult.message}</p>
                   {bulkImageResult.uploadedImages &&
                     bulkImageResult.uploadedImages.length > 0 && (
                       <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -700,7 +768,9 @@ export default function AddProductPage() {
                             className="flex items-center justify-between bg-gray-700 p-2 rounded text-sm"
                           >
                             <div className="flex items-center space-x-2">
-                              <span className="text-green-400">✅</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 text-green-400">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
                               <span className="truncate max-w-xs">
                                 {result.originalName}
                               </span>
@@ -717,9 +787,12 @@ export default function AddProductPage() {
                                 onClick={() =>
                                   copyToClipboard(result.cloudinary.url)
                                 }
-                                className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
+                              className="inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
                               >
-                                Copy
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6A2.25 2.25 0 0110.5 3.75h6.75A2.25 2.25 0 0119.5 6v10.5A2.25 2.25 0 0117.25 18.75H10.5A2.25 2.25 0 018.25 16.5V15M6 7.5H5.25A2.25 2.25 0 003 9.75v8.25A2.25 2.25 0 005.25 20.25h8.25A2.25 2.25 0 0015.75 18V9.75A2.25 2.25 0 0013.5 7.5H6z" />
+                              </svg>
+                              <span>Copy</span>
                               </button>
                             </div>
                           </div>
@@ -734,10 +807,12 @@ export default function AddProductPage() {
                         <button
                           type="button"
                           onClick={copyAllImageUrls}
-                          className="bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 flex items-center space-x-2"
+                        className="inline-flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700"
                         >
-                          <span>📋</span>
-                          <span>Copy All URLs</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6A2.25 2.25 0 0110.5 3.75h6.75A2.25 2.25 0 0119.5 6v10.5A2.25 2.25 0 0117.25 18.75H10.5A2.25 2.25 0 018.25 16.5V15M6 7.5H5.25A2.25 2.25 0 003 9.75v8.25A2.25 2.25 0 005.25 20.25h8.25A2.25 2.25 0 0015.75 18V9.75A2.25 2.25 0 0013.5 7.5H6z" />
+                        </svg>
+                        <span>Copy All URLs</span>
                         </button>
                         <p className="text-xs text-gray-400 mt-1">
                           Copies all successful URLs separated by commas for
@@ -748,7 +823,7 @@ export default function AddProductPage() {
                 </div>
               ) : (
                 <div className="text-red-400">
-                  <p className="text-sm mb-2">❌ {bulkImageResult.message}</p>
+                  <p className="text-sm mb-2">{bulkImageResult.message}</p>
                   {bulkImageResult.errors &&
                     bulkImageResult.errors.length > 0 && (
                       <div className="space-y-1">
@@ -765,17 +840,25 @@ export default function AddProductPage() {
           )}
         </div>
       </div>
+      )}
 
       {/* Divider */}
-      <div className="mb-8 border-t border-gray-600 pt-6">
-        <h3 className="text-lg font-semibold mb-4 text-white">
-          📝 Add Single Product
-        </h3>
+      {activeTab === "single" && (
+      <div className="mb-8 border-t border-gray-700 pt-6">
+        <div className="flex items-center gap-2 mb-2 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.651-1.652a1.875 1.875 0 112.652 2.652l-9.193 9.193a4.5 4.5 0 01-1.897 1.13L6 16.5l.69-4.075a4.5 4.5 0 011.13-1.897l9.042-9.041z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 7.125L16.875 4.5" />
+          </svg>
+          <h3 className="text-lg font-semibold">Add Single Product</h3>
+        </div>
       </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {activeTab === "single" && (
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Product Name */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Product Name *
           </label>
@@ -883,7 +966,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Description */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Product Description *
           </label>
@@ -904,7 +987,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Frame Dimensions */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Frame Dimensions
           </label>
@@ -919,7 +1002,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Product Information */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Product Information
           </label>
@@ -934,7 +1017,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Images */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Upload Images (max 4) *
           </label>
@@ -973,7 +1056,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Categories */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Product Categories
           </label>
@@ -1036,13 +1119,19 @@ export default function AddProductPage() {
         </div>
 
         {/* Submit */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          🚀 Add Product
-        </button>
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            className="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 12h13.5m-6.75-6.75L18.75 12l-6.75 6.75" />
+            </svg>
+            <span>Add Product</span>
+          </button>
+        </div>
       </form>
+      )}
     </div>
   );
 }

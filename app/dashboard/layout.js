@@ -227,6 +227,23 @@ export default function DashboardLayout({ children }) {
                   <span className="font-medium">Orders</span>
                 </button>
               </li>
+              {/* Staffs */}
+              <li>
+                <button
+                  onClick={() => {
+                    router.push("/dashboard/staffs");
+                    if (window.innerWidth < 1024) setSidebarVisible(false);
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition-all duration-300 text-gray-300 flex items-center gap-3 group"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-1a6 6 0 00-9-5.197M9 20H4v-1a6 6 0 019-5.197M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Staffs</span>
+                </button>
+              </li>
               <li>
                 <button
                   onClick={() => {
