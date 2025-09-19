@@ -44,6 +44,13 @@ export default function Dashboard() {
 
   const router = useRouter();
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
   useEffect(() => {
     fetchDashboardStats();
   }, []);
@@ -427,6 +434,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-white mb-2">
         Dashboard Overview
       </h1>
+        <p className="text-gray-200 font-medium mb-1">{getGreeting()}, Admin.</p>
         <p className="text-gray-300">
           Welcome to your admin dashboard. Here's what's happening with your store.
         </p>
