@@ -14,8 +14,7 @@ export default function DashboardLayout({ children }) {
     const verifyAdmin = async () => {
       try {
         const res = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
           }/api/admin/me`,
           {
             method: "GET",
@@ -62,8 +61,7 @@ export default function DashboardLayout({ children }) {
   const handleLogout = async () => {
     try {
       await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
         }/api/admin/logout`,
         {
           method: "POST",
@@ -148,9 +146,8 @@ export default function DashboardLayout({ children }) {
       <div className="flex flex-1 relative overflow-hidden">
         {/* Fixed Sidebar */}
         <aside
-          className={`${
-            sidebarVisible ? "translate-x-0" : "-translate-x-full"
-          } fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 transition-transform duration-300 bg-gray-800 border-r border-gray-700 z-40 flex-shrink-0 shadow-lg`}
+          className={`${sidebarVisible ? "translate-x-0" : "-translate-x-full"
+            } fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 transition-transform duration-300 bg-gray-800 border-r border-gray-700 z-40 flex-shrink-0 shadow-lg`}
         >
           <div className="p-6 h-full overflow-y-auto">
             <ul className="space-y-2">
@@ -247,6 +244,22 @@ export default function DashboardLayout({ children }) {
               <li>
                 <button
                   onClick={() => {
+                    router.push("/dashboard/vendors");
+                    if (window.innerWidth < 1024) setSidebarVisible(false);
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition-all duration-300 text-gray-300 flex items-center gap-3 group"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-violet-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Vendors</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
                     router.push("/dashboard/customers");
                     if (window.innerWidth < 1024) setSidebarVisible(false);
                   }}
@@ -294,9 +307,8 @@ export default function DashboardLayout({ children }) {
                       <span className="font-medium">Shipping Settings</span>
                     </div>
                     <svg
-                      className={`w-4 h-4 transform ${
-                        shippingDropdownOpen ? "rotate-180" : "rotate-0"
-                      } transition-transform duration-300`}
+                      className={`w-4 h-4 transform ${shippingDropdownOpen ? "rotate-180" : "rotate-0"
+                        } transition-transform duration-300`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -364,9 +376,8 @@ export default function DashboardLayout({ children }) {
 
         {/* Scrollable Main Content */}
         <main
-          className={`flex-1 bg-gray-900 transition-all duration-300 overflow-hidden ${
-            sidebarVisible ? "lg:ml-64" : "ml-0"
-          }`}
+          className={`flex-1 bg-gray-900 transition-all duration-300 overflow-hidden ${sidebarVisible ? "lg:ml-64" : "ml-0"
+            }`}
         >
           {/* Content wrapper with scroll */}
           <div className="h-full overflow-y-auto p-6">{children}</div>
